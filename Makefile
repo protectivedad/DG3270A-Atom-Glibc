@@ -29,7 +29,7 @@ include Makeconfig
 
 # This is the default target; it makes everything except the tests.
 .PHONY: all
-all: lib others
+all: link lib others
 
 ifneq ($(AUTOCONF),no)
 
@@ -48,6 +48,9 @@ chmod a-w$(patsubst %,$(comma)a+x,$(filter .,$(@D))) $@.new
 mv -f $@.new $@
 $(autoconf-it-cvs)
 endef
+
+link:
+	ln -vs libgcc.a `$(CC) -print-libgcc-file-name | sed 's/libgcc/&_eh/'`
 
 configure: configure.in aclocal.m4; $(autoconf-it)
 %/configure: %/configure.in aclocal.m4; $(autoconf-it)
