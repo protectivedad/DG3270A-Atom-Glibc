@@ -50,7 +50,7 @@ $(autoconf-it-cvs)
 endef
 
 link:
-	ln -vs libgcc.a `$(CC) -print-libgcc-file-name | sed 's/libgcc/&_eh/'`
+	ln -vsf libgcc.a `$(CC) -print-libgcc-file-name | sed 's/libgcc/&_eh/'`
 
 configure: configure.in aclocal.m4; $(autoconf-it)
 %/configure: %/configure.in aclocal.m4; $(autoconf-it)
