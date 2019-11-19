@@ -26,6 +26,12 @@ findidx (const int32_t *table,
 	 const unsigned char *extra,
 	 const unsigned char **cpp, size_t len)
 {
+  /* With GCC 7 when compiling with -Os the compiler warns that
+     seq1.back_us and seq2.back_us might be used uninitialized.
+     This uninitialized use is impossible for the same reason
+     as described in comments in locale/weightwc.h.  */
+  DIAG_PUSH_NEEDS_COMMENT;
+  DIAG_IGNORE_Os_NEEDS_COMMENT (7, "-Wmaybe-uninitialized");
   int_fast32_t i = table[*(*cpp)++];
   const unsigned char *cp;
   const unsigned char *usrc;
@@ -61,9 +67,17 @@ findidx (const int32_t *table,
 	     already.  */
 	  size_t cnt;
 
+	  /* With GCC 5.3 when compiling with -Os the compiler warns
+	     that seq2.back_us, which becomes usrc, might be used
+	     uninitialized.  This can't be true because we pass a length
+	     of -1 for len at the same time which means that this loop
+	     never executes.  */
+	  DIAG_PUSH_NEEDS_COMMENT;
+	  DIAG_IGNORE_Os_NEEDS_COMMENT (5, "-Wmaybe-uninitialized");
 	  for (cnt = 0; cnt < nhere && cnt < len; ++cnt)
 	    if (cp[cnt] != usrc[cnt])
 	      break;
+	  DIAG_POP_NEEDS_COMMENT;
 
 	  if (cnt == nhere)
 	    {
